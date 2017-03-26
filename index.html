@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+  <style>
+  #app{
+    margin: auto;
+    width: 70%;
+    padding-top: 100px;
+  }
+  form{
+        margin-bottom: 68px;
+  }
+  input{
+      width: 68%;
+      line-height: 32px;
+      border-radius: 9px;
+      font-size: 16px;
+      padding-left: 10px;
+}
+  button{
+    width: 100px;
+      line-height: 32px;
+      margin-left: 18px;
+      background-color: #0f96d6;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 17px;
+  }
+
+  a:hover{
+    border:1px solid #858585;
+  }
+  a:hover{
+    border-color: rgba(150,150,150,1);
+  }
+  .thumbnail {
+    width: 157px;
+    height: 122px;
+}
+  .mv-favicon,.mv-title , .mv-x{
+    display:inline-block;
+  }
+
+  .mv-title
+  {
+    box-sizing: border-box;
+    display: inline-block;
+    font-family: arial, sans-serif;
+    font-size: 12px;
+
+    position: relative;
+
+    top:-5px;
+  }
+  .maindiv{
+
+  }
+  .favicon{width:26px;height:26px;}
+  .container{
+    width:100%;
+  }
+  .mv-tilea{
+    width: 18%;
+    display: inline-block;
+    float: left;
+    word-wrap: break-word;
+    margin-right: 10px;
+    padding: 10px;
+    background-color: #efefef;
+  }
+  clearfix{
+    clear:both;
+  }
+  .hide{
+    display:none;
+  }
+  .show{
+    display:block;
+  }
+  </style>
+
+</head>
+<body>
+  <div id="app"></div>
+  <script type="text/babel" >
+  var SearchForm = React.createClass({
+    onFormSubmit: function (e) {
+      e.preventDefault();
+      var searchstring = this.refs.searchstring.value;
+      var searchvalue ="";
+      if (searchstring.length > 0) {
+        this.refs.searchstring.value = '';
+        searchvalue =  searchstring.split(" ").join("+") || searchstring;
+        this.props.onNewName(searchvalue);
+      }
+
+
+    },
+    render : function(){
+      return(
+        <form action="/search" id="f" method="get" onSubmit={this.onFormSubmit}>
+            <input id="searchbox" aria-hidden="true" autocomplete="off" name="searchboxname"
+        type="text" placeholder="enter item name" ref="searchstring"/>
+            <button type="submit">search</button>
+        </form>
+      );
+    }
+  });
+  var SearchOutput = React.createClass({
+    render :function(){
+      var showhideconatiner = "container show";
+      var amazonurlF = "https://www.amazon.com/s/ref=nb_sb_ss_c_1_4?url=search-alias%3Daps&field-keywords=";
+      var bestbuyurlf = "http://www.bestbuy.com/site/searchpage.jsp?st=";
+      var bestbuyurllast = "&_dyncharset=UTF-8&id=pcat17071&type=page&sc=Global&cp=1&nrp=&sp=&qp=&list=n&af=true&iht=y&usc=All+Categories&ks=960&keys=keys";
+      var amazonurl,bestbuyurl = "";
+      var amazonurlstr ,bestbuyurlstr="";
+      var searchtxt = this.props.searchfield;
+      var value=160;
+      console.log(this.props.iframe);
+      if(searchtxt.length > 0){
+        showhideconatiner = "container show";
+      }
+      amazonurlstr = amazonurlF+searchtxt;
+      bestbuyurlstr = bestbuyurlf+searchtxt+bestbuyurllast;
+      return(
+        <div className={showhideconatiner}>
+            <a className="mv-tilea" data-tid="1" href={amazonurlstr} aria-label="Amazon" title="Amazon">
+                <div className="mv-favicon">
+                  <img src="amazon_fav.png" title="" width="26" height="26" className="favicon"/>
+                </div>
+                <div className="mv-title">Amazon</div>
+                <div className="mv-thumb">
+                  <img title="Amazon" className="thumbnail" src="amazon_thumb.png"/>
+                </div>
+                <span classNmae="bluetxt">https://www.amazon.c...</span>
+            </a>
+            <div className="clearfix"></div>
+            <a className="mv-tilea" data-tid="1" href={bestbuyurlstr} aria-label="Best Buy" title="Best Buy">
+                <div className="mv-favicon">
+                  <img src="bestby_fav.png" title="" width="26" height="26" className="favicon"/>
+                </div>
+                <div className="mv-title">Best Buy</div>
+                <div className="mv-thumb">
+                  <img title="Amazon" className="thumbnail" src="bestby_thumb.png"/>
+                </div>
+                <span classNmae="bluetxt">http://www.bestbuy.c...</span>
+            </a>
+
+            <div><iframe src={bestbuyurlstr} width={value} height={value}>txt</iframe></div>
+            <div><iframe src={amazonurlstr} width={value} height={value}>txt</iframe></div>
+
+          </div>
+      );
+    }
+  });
+  var SearchPage = React.createClass({
+    getDefaultProps: function () {
+      return {
+        searchfield: '',
+        iframe : "iframe"
+      };
+    },
+    getInitialState : function(){
+
+      return{
+        searchfield : this.props.searchfield,
+        iframe :this.props.iframe
+      };
+
+    },
+    handleurl: function (searchfield) {
+      this.setState({
+        searchfield: searchfield
+      });
+    },
+    render : function(){
+      return(
+        <div className="maindiv">
+          <SearchForm searchfield = {this.state.searchfield} onNewName={this.handleurl}/>
+          <SearchOutput searchfield={this.state.iframe}/>
+        </div>
+      );
+    }
+  });
+  var seachtinputext = '';
+  ReactDOM.render(
+    <SearchPage searchfield={seachtinputext} iframe='iframe' />,
+    document.getElementById("app")
+  );
+  </script>
+
+</body>
+</html>
